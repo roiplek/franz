@@ -5,7 +5,6 @@ import { defineMessages, intlShape } from 'react-intl';
 import injectSheet from 'react-jss';
 
 import InfoBar from '../ui/InfoBar';
-import { Component as DelayApp } from '../../features/delayApp';
 import ErrorBoundary from '../util/ErrorBoundary';
 
 import WorkspaceSwitchingIndicator from '../../features/workspaces/components/WorkspaceSwitchingIndicator';
@@ -63,7 +62,6 @@ class AppLayout extends Component {
     areRequiredRequestsSuccessful: PropTypes.bool.isRequired,
     retryRequiredRequests: PropTypes.func.isRequired,
     areRequiredRequestsLoading: PropTypes.bool.isRequired,
-    isDelayAppScreenVisible: PropTypes.bool.isRequired,
     hasActivatedTrial: PropTypes.bool.isRequired,
     showWebControls: PropTypes.bool.isRequired,
     activeService: PropTypes.instanceOf(Service),
@@ -97,7 +95,6 @@ class AppLayout extends Component {
       areRequiredRequestsSuccessful,
       retryRequiredRequests,
       areRequiredRequestsLoading,
-      isDelayAppScreenVisible,
       hasActivatedTrial,
       showWebControls,
       activeService,
@@ -113,25 +110,20 @@ class AppLayout extends Component {
             {workspacesDrawer}
             {sidebar}
             <div className="app__service">
-              {news.length > 0 && news.map(item => (
-                <InfoBar
-                  key={item.id}
-                  position="top"
-                  type={item.type}
-                  sticky={item.sticky}
-                  onHide={() => removeNewsItem({ newsId: item.id })}
-                >
-                  <span
-                    dangerouslySetInnerHTML={createMarkup(item.message)}
-                    onClick={(event) => {
-                      const { target } = event;
-                      if (target && target.hasAttribute('data-is-news-cta')) {
-                        removeNewsItem({ newsId: item.id });
-                      }
-                    }}
-                  />
-                </InfoBar>
-              ))}
+                {news.length > 0
+                  && news.map(item => (
+                    <InfoBar
+                      key={item.id}
+                      position="top"
+                      type={item.type}
+                      sticky={item.sticky}
+                      onHide={() => removeNewsItem({ newsId: item.id })}
+                    >
+                      <span
+                        dangerouslySetInnerHTML={createMarkup(item.message)}
+                      />
+                    </InfoBar>
+                  ))}
               {hasActivatedTrial && (
                 <TrialActivationInfoBar />
               )}
@@ -166,18 +158,6 @@ class AppLayout extends Component {
                   nextAppReleaseVersion={nextAppReleaseVersion}
                   onInstallUpdate={installAppUpdate}
                 />
-              )}
-              {isDelayAppScreenVisible ? <DelayApp /> : (
-                <>
-                  <WorkspaceSwitchingIndicator />
-                  {!workspaceStore.isSwitchingWorkspace && (
-                    <div className="app__service-size-container">
-                      {services}
-                      {children}
-                      <Todos />
-                    </div>
-                  )}
-                </>
               )}
               <TrialStatusBar />
             </div>
